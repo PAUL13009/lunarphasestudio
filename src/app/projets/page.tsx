@@ -3,6 +3,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import AnimatedContent from "@/components/AnimatedContent";
+import Header from "@/components/Header";
+
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
 
 interface Project {
   slug: string;
@@ -175,8 +184,8 @@ function ProjectDetail({
         scrollRef.current.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       }
       setPhase("returning");
-    }, 400);
-    setTimeout(onClose, 1150);
+    }, 800);
+    setTimeout(onClose, 1900);
   }, [onClose]);
 
   useEffect(() => {
@@ -245,8 +254,8 @@ function ProjectDetail({
         style={{
           opacity: isSettled || isClosing ? 1 : 0,
           transition: isReturning
-            ? "opacity 0.7s cubic-bezier(0.33,1,0.68,1)"
-            : "opacity 0.7s cubic-bezier(0.16,1,0.3,1)",
+            ? "opacity 1s cubic-bezier(0.33,1,0.68,1)"
+            : "opacity 0.9s cubic-bezier(0.16,1,0.3,1)",
         }}
         onClick={handleClose}
       />
@@ -258,7 +267,9 @@ function ProjectDetail({
         style={{
           opacity: showInfo ? 1 : 0,
           transform: showInfo ? "scale(1)" : "scale(0.5)",
-          transition: "opacity 0.3s ease, transform 0.3s ease, color 0.3s",
+          transition: isClosing
+            ? "opacity 0.5s ease, transform 0.5s ease, color 0.3s"
+            : "opacity 0.5s ease 0.8s, transform 0.5s ease 0.8s, color 0.3s",
         }}
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -272,7 +283,7 @@ function ProjectDetail({
         className="absolute z-10 flex flex-col overflow-hidden"
         style={{
           ...carouselStyle,
-          transition: "top 0.7s cubic-bezier(0.33,1,0.68,1), left 0.7s cubic-bezier(0.33,1,0.68,1), width 0.7s cubic-bezier(0.33,1,0.68,1), height 0.7s cubic-bezier(0.33,1,0.68,1)",
+          transition: "top 1s cubic-bezier(0.33,1,0.68,1), left 1s cubic-bezier(0.33,1,0.68,1), width 1s cubic-bezier(0.33,1,0.68,1), height 1s cubic-bezier(0.33,1,0.68,1)",
         }}
       >
         {/* Scroll list - hidden during return, replaced by static image */}
@@ -294,8 +305,8 @@ function ProjectDetail({
               paddingTop: isSettled ? "80px" : "0px",
               paddingBottom: isSettled ? "80px" : "0px",
               transition: isClosing
-                ? "gap 0.3s ease, padding 0.3s ease"
-                : "gap 0.7s ease 0.3s, padding 0.7s ease 0.3s",
+                ? "gap 0.9s ease 0.3s, padding 0.9s ease 0.3s"
+                : "gap 0.9s ease 0.4s, padding 0.9s ease 0.4s",
             }}
           >
             {project.gallery.map((src, i) => (
@@ -309,8 +320,8 @@ function ProjectDetail({
                   opacity: i === 0 ? 1 : isSettled ? 1 : 0,
                   transform: i === 0 ? "none" : isSettled ? "translateY(0)" : "translateY(30px)",
                   transition: isClosing
-                    ? "opacity 0.25s ease, transform 0.25s ease"
-                    : `opacity 0.5s ease ${0.4 + i * 0.08}s, transform 0.5s ease ${0.4 + i * 0.08}s`,
+                    ? `opacity 0.7s ease ${0.1 * (project.gallery.length - 1 - i)}s, transform 0.7s ease ${0.1 * (project.gallery.length - 1 - i)}s`
+                    : `opacity 0.7s ease ${0.5 + i * 0.1}s, transform 0.7s ease ${0.5 + i * 0.1}s`,
                 }}
               >
                 <Image
@@ -343,7 +354,7 @@ function ProjectDetail({
           className="absolute left-6 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2"
           style={{
             opacity: showInfo ? 1 : 0,
-            transition: isClosing ? "opacity 0.2s ease" : "opacity 0.4s ease 0.6s",
+            transition: isClosing ? "opacity 0.5s ease" : "opacity 0.5s ease 0.9s",
           }}
         >
           {project.gallery.map((_, i) => (
@@ -367,11 +378,19 @@ function ProjectDetail({
           opacity: showInfo ? 1 : 0,
           transform: showInfo ? "translateX(0)" : "translateX(60px)",
           transition: isClosing
-            ? "opacity 0.3s cubic-bezier(0.16,1,0.3,1), transform 0.3s cubic-bezier(0.16,1,0.3,1)"
-            : "opacity 0.6s cubic-bezier(0.16,1,0.3,1) 0.3s, transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.3s",
+            ? "opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s"
+            : "opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s",
         }}
       >
-        <div>
+        <div
+          style={{
+            opacity: showInfo ? 1 : 0,
+            transform: showInfo ? "translateY(0)" : "translateY(20px)",
+            transition: isClosing
+              ? "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s"
+              : "opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s",
+          }}
+        >
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/40">
             {project.category}
           </p>
@@ -384,10 +403,10 @@ function ProjectDetail({
           className="mb-12 h-px w-full bg-white/10"
           style={{
             transform: showInfo ? "scaleX(1)" : "scaleX(0)",
-            transformOrigin: "left",
+            transformOrigin: showInfo ? "left" : "right",
             transition: isClosing
-              ? "transform 0.25s ease"
-              : "transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.45s",
+              ? "transform 1s cubic-bezier(0.16,1,0.3,1) 0.1s"
+              : "transform 1s cubic-bezier(0.16,1,0.3,1) 0.6s",
           }}
         />
 
@@ -396,8 +415,8 @@ function ProjectDetail({
             opacity: showInfo ? 1 : 0,
             transform: showInfo ? "translateY(0)" : "translateY(20px)",
             transition: isClosing
-              ? "opacity 0.25s ease, transform 0.25s ease"
-              : "opacity 0.5s ease 0.5s, transform 0.5s ease 0.5s",
+              ? "opacity 0.7s ease 0.05s, transform 0.7s ease 0.05s"
+              : "opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s",
           }}
         >
           <p className="mb-12 text-sm leading-relaxed text-white/60 lg:text-base">
@@ -444,81 +463,253 @@ export default function Projets() {
   const [openProject, setOpenProject] = useState<Project | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const [entrance, setEntrance] = useState(0);
+  const isAnimating = useRef(false);
+  const progressRef = useRef(0);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setEntrance(1), 100);
+    const t2 = setTimeout(() => setEntrance(2), 1200);
+    const t3 = setTimeout(() => {
+      setEntrance(3);
+      setMounted(true);
+    }, 2400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (!wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
+    const scrollableHeight = wrapperRef.current.offsetHeight - window.innerHeight;
+    if (scrollableHeight <= 0) return;
+    const p = clamp(-rect.top / scrollableHeight, 0, 1);
+    progressRef.current = p;
+    setProgress(p);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (!wrapperRef.current || isAnimating.current) return;
+
+      const scrollableHeight = wrapperRef.current.offsetHeight - window.innerHeight;
+      const wrapperTop = wrapperRef.current.offsetTop;
+      const p = progressRef.current;
+
+      if (p < 0.1 && e.deltaY > 0) {
+        e.preventDefault();
+        isAnimating.current = true;
+        window.scrollTo({
+          top: wrapperTop + scrollableHeight,
+          behavior: "smooth",
+        });
+        setTimeout(() => {
+          isAnimating.current = false;
+        }, 1200);
+      }
+
+      if (p > 0.9 && p <= 1 && e.deltaY < 0) {
+        const pastHero = window.scrollY > wrapperTop + scrollableHeight + 10;
+        if (!pastHero) {
+          e.preventDefault();
+          isAnimating.current = true;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setTimeout(() => {
+            isAnimating.current = false;
+          }, 1200);
+        }
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, []);
+
   const handleOpen = (project: Project, rect: DOMRect) => {
     setOriginRect(rect);
     setOpenProject(project);
   };
 
-  return (
-    <main className="min-h-screen bg-black text-white">
-      {/* Header spacer */}
-      <div className="h-20" />
+  const insetTop = lerp(28, 0, progress);
+  const insetBottom = lerp(18, 0, progress);
+  const insetX = lerp(20, 0, progress);
+  const borderRadius = lerp(12, 0, progress);
 
-      {/* Hero grid */}
-      <section>
-        <div className="grid h-[100vh] grid-cols-1 gap-0 md:grid-cols-2 md:grid-rows-2">
-          {/* Title cell */}
-          <div className="flex flex-col justify-between px-8 py-10 md:px-12 md:py-16">
-            <h1 className="text-[clamp(3rem,8vw,7rem)] font-bold leading-[0.95] tracking-tight uppercase">
-              Découvrez
-              <br />
-              Nos
-              <br />
-              Projets
-            </h1>
-            <div className="mt-12 flex items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-                Nos Projets
-              </span>
-              <span className="flex items-center gap-[2px] text-white/60">
-                <span className="inline-block h-4 w-[2px] bg-white/40" />
-                <span className="inline-block h-5 w-[2px] bg-white/60" />
-                <span className="inline-block h-3 w-[2px] bg-white/40" />
-                <span className="inline-block h-6 w-[2px] bg-white/60" />
-                <span className="inline-block h-4 w-[2px] bg-white/40" />
-              </span>
+  const entranceInsetTop = entrance >= 1 ? 28 : 45;
+  const entranceInsetBottom = entrance >= 1 ? 18 : 45;
+  const entranceInsetX = entrance >= 1 ? 20 : 45;
+  const entranceBorderRadius = entrance >= 1 ? 12 : 20;
+
+  const finalInsetTop = entrance < 3 ? entranceInsetTop : insetTop;
+  const finalInsetBottom = entrance < 3 ? entranceInsetBottom : insetBottom;
+  const finalInsetX = entrance < 3 ? entranceInsetX : insetX;
+  const finalBorderRadius = entrance < 3 ? entranceBorderRadius : borderRadius;
+  const clipPath = `inset(${finalInsetTop}% ${finalInsetX}% ${finalInsetBottom}% ${finalInsetX}% round ${finalBorderRadius}px)`;
+
+  const overlayOpacity = clamp((progress - 0.5) / 0.5, 0, 0.55);
+  const splashOpacity = entrance < 2 ? 0 : clamp(1 - progress / 0.4, 0, 1);
+  const splashTranslateY = entrance < 2 ? 20 : lerp(0, -30, clamp(progress / 0.4, 0, 1));
+  const heroRaw = clamp((progress - 0.88) / 0.12, 0, 1);
+  const heroOpacity = mounted ? heroRaw : 0;
+  const heroTranslateY = lerp(30, 0, heroRaw);
+  const bgWhiteOpacity = entrance < 2 ? 0 : clamp(1 - progress / 0.6, 0, 1);
+
+  return (
+    <>
+      <Header />
+      <main className="relative z-10 min-h-screen bg-black text-white">
+        {/* Black cover during entrance to prevent any flash */}
+        <div
+          className="fixed inset-0 z-[100] bg-black pointer-events-none"
+          style={{
+            opacity: entrance < 1 ? 1 : 0,
+            transition: "opacity 0.5s ease",
+            visibility: entrance >= 2 ? "hidden" : "visible",
+          }}
+        />
+
+        {/* Hero with same splash as other pages */}
+        <div ref={wrapperRef} className="relative" style={{ height: "250vh" }}>
+          <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
+            <div
+              className="absolute inset-0 bg-white"
+              style={{
+                opacity: bgWhiteOpacity,
+                transition: entrance < 3 ? "opacity 1.2s cubic-bezier(0.22,1,0.36,1)" : undefined,
+              }}
+            />
+
+            <div
+              className="absolute inset-0"
+              style={{
+                clipPath,
+                opacity: entrance >= 1 ? 1 : 0,
+                transition: entrance < 3
+                  ? "clip-path 1.4s cubic-bezier(0.22,1,0.36,1), opacity 1s cubic-bezier(0.22,1,0.36,1)"
+                  : undefined,
+              }}
+            >
+              <Image
+                src="/Skyline_Marina_Bay_Singapore.jpg"
+                alt="Lunar Phase Studio"
+                fill
+                priority
+                className="object-cover object-center"
+                quality={90}
+              />
+              <div
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            </div>
+
+            {/* Splash content */}
+            <div
+              className="pointer-events-none absolute inset-0 z-10 flex flex-col"
+              style={{
+                opacity: splashOpacity,
+                transform: `translateY(${splashTranslateY}px)`,
+                transition: entrance < 3
+                  ? "opacity 1s cubic-bezier(0.22,1,0.36,1) 0.2s, transform 1s cubic-bezier(0.22,1,0.36,1) 0.2s"
+                  : undefined,
+              }}
+            >
+              <div className="flex-shrink-0 px-4 pt-4 lg:px-6 lg:pt-6">
+                <h1 className="splash-title select-none font-bold uppercase leading-[0.85] tracking-tighter text-black">
+                  Nos
+                  <br />
+                  Projets
+                </h1>
+              </div>
+              <div className="flex-1" />
+              <div className="flex-shrink-0 px-6 pb-6 lg:px-10 lg:pb-8">
+                <div className="flex items-end justify-end">
+                  <p className="max-w-xs text-right text-sm leading-relaxed text-black/60 lg:text-base">
+                    Driven by Vision, Centered on Craft,
+                    <br />
+                    Embracing Innovation
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero finale content */}
+            <div
+              className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center px-6 lg:px-10"
+              style={{
+                opacity: heroOpacity,
+                transform: `translateY(${heroTranslateY}px)`,
+              }}
+            >
+              <div className="mx-auto w-full max-w-[1600px]">
+                <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/50">
+                  Portfolio
+                </p>
+                <h2 className="max-w-3xl text-4xl font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
+                  Découvrez nos
+                  <br />
+                  réalisations
+                  <br />
+                  <span className="text-white/50">les plus marquantes</span>
+                </h2>
+              </div>
             </div>
           </div>
-
-          <AnimatedContent distance={60} duration={0.9} delay={0.1} threshold={0.05} className="relative overflow-hidden">
-            <ProjectCard project={projects[0]} onClick={(rect) => handleOpen(projects[0], rect)} />
-          </AnimatedContent>
-          <AnimatedContent distance={60} duration={0.9} delay={0.25} threshold={0.05} className="relative overflow-hidden">
-            <ProjectCard project={projects[1]} onClick={(rect) => handleOpen(projects[1], rect)} />
-          </AnimatedContent>
-          <AnimatedContent distance={60} duration={0.9} delay={0.4} threshold={0.05} className="relative overflow-hidden">
-            <ProjectCard project={projects[2]} onClick={(rect) => handleOpen(projects[2], rect)} />
-          </AnimatedContent>
         </div>
-      </section>
 
-      {/* More projects grid */}
-      <section>
-        <div className="grid grid-cols-1 gap-0 md:grid-cols-2 md:grid-rows-2" style={{ height: "100vh" }}>
-          <AnimatedContent distance={60} duration={0.9} delay={0} threshold={0.15} className="relative overflow-hidden">
-            <ProjectCard project={projects[3]} onClick={(rect) => handleOpen(projects[3], rect)} />
-          </AnimatedContent>
-          <AnimatedContent distance={60} duration={0.9} delay={0.15} threshold={0.15} className="relative overflow-hidden">
-            <ProjectCard project={projects[4]} onClick={(rect) => handleOpen(projects[4], rect)} />
-          </AnimatedContent>
-          <AnimatedContent distance={60} duration={0.9} delay={0.3} threshold={0.15} className="relative overflow-hidden">
-            <ProjectCard project={projects[5]} onClick={(rect) => handleOpen(projects[5], rect)} />
-          </AnimatedContent>
-          <AnimatedContent distance={60} duration={0.9} delay={0.45} threshold={0.15} className="relative overflow-hidden">
-            <ProjectCard project={projects[6]} onClick={(rect) => handleOpen(projects[6], rect)} />
-          </AnimatedContent>
-        </div>
-      </section>
+        {/* Project grids */}
+        <section style={{ opacity: entrance >= 3 ? 1 : 0, transition: "opacity 0.5s ease" }}>
+          <div className="grid h-[100vh] grid-cols-1 gap-0 md:grid-cols-2 md:grid-rows-2">
+            <AnimatedContent distance={60} duration={0.9} delay={0} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[0]} onClick={(rect) => handleOpen(projects[0], rect)} />
+            </AnimatedContent>
+            <AnimatedContent distance={60} duration={0.9} delay={0.15} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[1]} onClick={(rect) => handleOpen(projects[1], rect)} />
+            </AnimatedContent>
+            <AnimatedContent distance={60} duration={0.9} delay={0.3} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[2]} onClick={(rect) => handleOpen(projects[2], rect)} />
+            </AnimatedContent>
+            <AnimatedContent distance={60} duration={0.9} delay={0.45} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[3]} onClick={(rect) => handleOpen(projects[3], rect)} />
+            </AnimatedContent>
+          </div>
+        </section>
 
-      {/* Project detail overlay */}
-      {openProject && originRect && (
-        <ProjectDetail
-          key={openProject.slug}
-          project={openProject}
-          originRect={originRect}
-          onClose={() => setOpenProject(null)}
-        />
-      )}
-    </main>
+        <section style={{ opacity: entrance >= 3 ? 1 : 0, transition: "opacity 0.5s ease" }}>
+          <div className="grid grid-cols-1 gap-0 md:grid-cols-2 md:grid-rows-2" style={{ height: "100vh" }}>
+            <AnimatedContent distance={60} duration={0.9} delay={0} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[4]} onClick={(rect) => handleOpen(projects[4], rect)} />
+            </AnimatedContent>
+            <AnimatedContent distance={60} duration={0.9} delay={0.15} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[5]} onClick={(rect) => handleOpen(projects[5], rect)} />
+            </AnimatedContent>
+            <AnimatedContent distance={60} duration={0.9} delay={0.3} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects[6]} onClick={(rect) => handleOpen(projects[6], rect)} />
+            </AnimatedContent>
+            <AnimatedContent distance={60} duration={0.9} delay={0.45} threshold={0.15} className="relative overflow-hidden">
+              <ProjectCard project={projects.length > 7 ? projects[7] : projects[0]} onClick={(rect) => handleOpen(projects.length > 7 ? projects[7] : projects[0], rect)} />
+            </AnimatedContent>
+          </div>
+        </section>
+
+        {/* Project detail overlay */}
+        {openProject && originRect && (
+          <ProjectDetail
+            key={openProject.slug}
+            project={openProject}
+            originRect={originRect}
+            onClose={() => setOpenProject(null)}
+          />
+        )}
+      </main>
+    </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const images = [
   { src: "/archi.png",      top: "0%",   left: "0%",   w: "22%", h: "14%" },
@@ -290,7 +291,7 @@ export default function AllWork() {
         </div>
 
         {/* Title */}
-        <a
+        <Link
           href="/projets"
           ref={titleRef}
           className="absolute left-1/2 top-[10%] z-40 whitespace-nowrap font-bold uppercase tracking-tight text-white will-change-transform hover:text-white/80 transition-colors"
@@ -304,7 +305,7 @@ export default function AllWork() {
           <sup className="ml-1 text-[0.4em] font-normal text-white/50">
             ({totalProjects})
           </sup>
-        </a>
+        </Link>
       </div>
     </div>
   );
