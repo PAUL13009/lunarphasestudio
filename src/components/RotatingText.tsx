@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, type Transition, type TargetAndTransition, type VariantLabels } from 'motion/react';
 
 import './RotatingText.css';
 
@@ -9,12 +9,15 @@ function cn(...classes: (string | undefined | false | null)[]) {
   return classes.filter(Boolean).join(' ');
 }
 
+type MotionInitial = boolean | TargetAndTransition | VariantLabels | undefined;
+type MotionAnimate = TargetAndTransition | VariantLabels | undefined;
+
 interface RotatingTextProps {
   texts: string[];
-  transition?: Record<string, unknown>;
-  initial?: Record<string, unknown>;
-  animate?: Record<string, unknown>;
-  exit?: Record<string, unknown>;
+  transition?: Transition;
+  initial?: MotionInitial;
+  animate?: MotionAnimate;
+  exit?: MotionAnimate;
   animatePresenceMode?: 'wait' | 'sync' | 'popLayout';
   animatePresenceInitial?: boolean;
   rotationInterval?: number;
@@ -189,12 +192,12 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
                     animate={animate}
                     exit={exit}
                     transition={{
-                      ...transition,
+                      ...(transition as Record<string, unknown>),
                       delay: getStaggerDelay(
                         previousCharsCount + charIndex,
                         array.reduce((sum, word) => sum + word.characters.length, 0)
                       )
-                    }}
+                    } as Transition}
                     className={cn('text-rotate-element', elementLevelClassName)}
                   >
                     {char}
