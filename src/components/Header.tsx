@@ -8,6 +8,7 @@ import ContactOverlay from "@/components/ContactOverlay";
 
 const navLinks = [
   { href: "#services", label: "Services" },
+  { href: "/projets", label: "Projets" },
   { href: "/a-propos", label: "À propos" },
   { href: "#contact", label: "Contact" },
 ];
@@ -63,7 +64,7 @@ export default function Header() {
           href="/"
           className="text-sm font-semibold uppercase tracking-[0.2em] text-white"
         >
-          Lunar Phase Studio
+          Deep Night Studio
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">

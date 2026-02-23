@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import AnimatedContent from "@/components/AnimatedContent";
 import Header from "@/components/Header";
+import RotatingText from "@/components/RotatingText";
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -460,17 +461,23 @@ function ProjectDetail({
 }
 
 export default function Projets() {
+  const [reveal] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("reveal") === "true";
+  });
+
   const [openProject, setOpenProject] = useState<Project | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
-  const [mounted, setMounted] = useState(false);
-  const [entrance, setEntrance] = useState(0);
+  const [mounted, setMounted] = useState(!reveal);
+  const [entrance, setEntrance] = useState(reveal ? 0 : 3);
   const isAnimating = useRef(false);
   const progressRef = useRef(0);
 
   useEffect(() => {
+    if (!reveal) return;
     const t1 = setTimeout(() => setEntrance(1), 100);
     const t2 = setTimeout(() => setEntrance(2), 1200);
     const t3 = setTimeout(() => {
@@ -478,7 +485,7 @@ export default function Projets() {
       setMounted(true);
     }, 2400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, []);
+  }, [reveal]);
 
   const handleScroll = useCallback(() => {
     if (!wrapperRef.current) return;
@@ -562,6 +569,16 @@ export default function Projets() {
   const heroTranslateY = lerp(30, 0, heroRaw);
   const bgWhiteOpacity = entrance < 2 ? 0 : clamp(1 - progress / 0.6, 0, 1);
 
+  const [heroTextVisible, setHeroTextVisible] = useState(false);
+
+  useEffect(() => {
+    if (heroRaw >= 1 && mounted) {
+      setHeroTextVisible(true);
+    } else if (heroRaw < 0.5) {
+      setHeroTextVisible(false);
+    }
+  }, [heroRaw, mounted]);
+
   return (
     <>
       <Header />
@@ -599,7 +616,7 @@ export default function Projets() {
             >
               <Image
                 src="/Skyline_Marina_Bay_Singapore.jpg"
-                alt="Lunar Phase Studio"
+                alt="Deep Night Studio"
                 fill
                 priority
                 className="object-cover object-center"
@@ -645,21 +662,67 @@ export default function Projets() {
             <div
               className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center px-6 lg:px-10"
               style={{
-                opacity: heroOpacity,
+                opacity: heroTextVisible ? 1 : 0,
                 transform: `translateY(${heroTranslateY}px)`,
               }}
             >
               <div className="mx-auto w-full max-w-[1600px]">
-                <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/50">
-                  Portfolio
-                </p>
-                <h2 className="max-w-3xl text-4xl font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
-                  Découvrez nos
-                  <br />
-                  réalisations
-                  <br />
-                  <span className="text-white/50">les plus marquantes</span>
-                </h2>
+                {heroTextVisible && (
+                  <>
+                    <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/50">
+                      <RotatingText
+                        texts={["Portfolio"]}
+                        auto={false}
+                        animatePresenceInitial={true}
+                        splitBy="characters"
+                        staggerFrom="first"
+                        staggerDuration={0.03}
+                        transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                      />
+                    </p>
+                    <h2 className="max-w-3xl text-4xl font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
+                      <RotatingText
+                        texts={["Découvrez nos"]}
+                        auto={false}
+                        animatePresenceInitial={true}
+                        splitBy="characters"
+                        staggerFrom="first"
+                        staggerDuration={0.02}
+                        transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                      />
+                      <br />
+                      <RotatingText
+                        texts={["réalisations"]}
+                        auto={false}
+                        animatePresenceInitial={true}
+                        splitBy="characters"
+                        staggerFrom="first"
+                        staggerDuration={0.02}
+                        transition={{ type: "spring", damping: 30, stiffness: 200, delay: 0.3 }}
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                      />
+                      <br />
+                      <span className="text-white/50">
+                        <RotatingText
+                          texts={["les plus marquantes"]}
+                          auto={false}
+                          animatePresenceInitial={true}
+                          splitBy="characters"
+                          staggerFrom="first"
+                          staggerDuration={0.02}
+                          transition={{ type: "spring", damping: 30, stiffness: 200, delay: 0.6 }}
+                          initial={{ y: "100%", opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                        />
+                      </span>
+                    </h2>
+                  </>
+                )}
               </div>
             </div>
           </div>

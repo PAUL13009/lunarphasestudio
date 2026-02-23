@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const text = "Basé à Marseille, Lunar Phase Studio est un studio de Webdesign et de Stratégie Digitale. Nous créons des interfaces haute performance et des identités visuelles fortes pour des projets d'envergure, partout en France et à l'international.";
+const text = "Basé à Marseille, Deep Night Studio est un studio de Webdesign et de Stratégie Digitale. Nous créons des interfaces haute performance et des identités visuelles fortes pour des projets d'envergure, partout en France et à l'international.";
 
 // Split into characters, preserving spaces
 const chars = text.split("");

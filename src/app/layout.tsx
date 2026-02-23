@@ -8,7 +8,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Lunar Phase Studio | Solutions Numériques",
+  title: "Deep Night Studio | Solutions Numériques",
   description:
     "Studio créatif spécialisé dans la création de solutions numériques sur mesure. Sites web, applications mobiles, consulting et UI/UX design.",
 };

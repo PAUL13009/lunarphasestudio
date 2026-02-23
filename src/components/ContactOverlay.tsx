@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import RotatingText from "@/components/RotatingText";
 
 export default function ContactOverlay({ onClose }: { onClose: () => void }) {
   const [phase, setPhase] = useState<"closed" | "open" | "hiding" | "curtain">("closed");
@@ -36,6 +37,17 @@ export default function ContactOverlay({ onClose }: { onClose: () => void }) {
   const showContent = phase === "open";
   const showCurtain = phase === "open" || phase === "hiding";
   const isHiding = phase === "hiding";
+
+  const [titleVisible, setTitleVisible] = useState(false);
+
+  useEffect(() => {
+    if (showContent) {
+      const t = setTimeout(() => setTitleVisible(true), 1000);
+      return () => clearTimeout(t);
+    } else {
+      setTitleVisible(false);
+    }
+  }, [showContent]);
 
   return (
     <div
@@ -97,17 +109,20 @@ export default function ContactOverlay({ onClose }: { onClose: () => void }) {
         className="absolute left-0 top-0 z-20 flex h-full w-1/2 items-center justify-center"
         style={{ pointerEvents: "none" }}
       >
-        <h2
-          className="text-3xl font-bold uppercase tracking-tight text-white will-change-transform lg:text-5xl"
-          style={{
-            opacity: showContent ? 1 : 0,
-            transform: showContent ? "translateY(0px)" : "translateY(30px)",
-            transition: isHiding
-              ? "opacity 0.3s ease, transform 0.3s ease"
-              : "opacity 0.8s ease 1s, transform 0.8s ease 1s",
-          }}
-        >
-          Contactez-nous
+        <h2 className="text-3xl font-bold uppercase tracking-tight text-white lg:text-5xl">
+          {titleVisible && (
+            <RotatingText
+              texts={["Contactez-nous"]}
+              auto={false}
+              animatePresenceInitial={true}
+              splitBy="characters"
+              staggerFrom="first"
+              staggerDuration={0.025}
+              transition={{ type: "spring", damping: 30, stiffness: 200 }}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+            />
+          )}
         </h2>
       </div>
 

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import CountUp from "@/components/CountUp";
 import Header from "@/components/Header";
+import RotatingText from "@/components/RotatingText";
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -159,7 +160,7 @@ function CtaReveal() {
             className="mb-16 select-none text-center font-bold uppercase leading-[0.85] tracking-tighter text-white"
             style={{ fontSize: "clamp(3rem, 12vw, 13rem)" }}
           >
-            Lunar Phase Studio
+            Deep Night Studio
           </h2>
 
           {/* CTA content */}
@@ -541,6 +542,15 @@ export default function APropos() {
   const heroRaw = clamp((progress - 0.88) / 0.12, 0, 1);
   const heroOpacity = mounted ? heroRaw : 0;
   const heroTranslateY = lerp(30, 0, heroRaw);
+  const [heroTextVisible, setHeroTextVisible] = useState(false);
+
+  useEffect(() => {
+    if (heroRaw >= 1 && mounted) {
+      setHeroTextVisible(true);
+    } else if (heroRaw < 0.5) {
+      setHeroTextVisible(false);
+    }
+  }, [heroRaw, mounted]);
   const bgWhiteOpacity = clamp(1 - progress / 0.6, 0, 1);
 
   return (
@@ -558,7 +568,7 @@ export default function APropos() {
           <div className="absolute inset-0" style={{ clipPath }}>
             <Image
               src="/Skyline_Marina_Bay_Singapore.jpg"
-              alt="Lunar Phase Studio"
+              alt="Deep Night Studio"
               fill
               priority
               className="object-cover object-center"
@@ -601,21 +611,67 @@ export default function APropos() {
           <div
             className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center px-6 lg:px-10"
             style={{
-              opacity: heroOpacity,
+              opacity: heroTextVisible ? 1 : 0,
               transform: `translateY(${heroTranslateY}px)`,
             }}
           >
             <div className="mx-auto w-full max-w-[1600px]">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/50">
-                À propos
-              </p>
-              <h2 className="max-w-3xl text-4xl font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
-                Nous créons des
-                <br />
-                expériences digitales
-                <br />
-                <span className="text-white/50">d&apos;exception</span>
-              </h2>
+              {heroTextVisible && (
+                <>
+                  <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/50">
+                    <RotatingText
+                      texts={["À propos"]}
+                      auto={false}
+                      animatePresenceInitial={true}
+                      splitBy="characters"
+                      staggerFrom="first"
+                      staggerDuration={0.03}
+                      transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                      initial={{ y: "100%", opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                    />
+                  </p>
+                  <h2 className="max-w-3xl text-4xl font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
+                    <RotatingText
+                      texts={["Nous créons des"]}
+                      auto={false}
+                      animatePresenceInitial={true}
+                      splitBy="characters"
+                      staggerFrom="first"
+                      staggerDuration={0.02}
+                      transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                      initial={{ y: "100%", opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                    />
+                    <br />
+                    <RotatingText
+                      texts={["expériences digitales"]}
+                      auto={false}
+                      animatePresenceInitial={true}
+                      splitBy="characters"
+                      staggerFrom="first"
+                      staggerDuration={0.02}
+                      transition={{ type: "spring", damping: 30, stiffness: 200, delay: 0.3 }}
+                      initial={{ y: "100%", opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                    />
+                    <br />
+                    <span className="text-white/50">
+                      <RotatingText
+                        texts={["d'exception"]}
+                        auto={false}
+                        animatePresenceInitial={true}
+                        splitBy="characters"
+                        staggerFrom="first"
+                        staggerDuration={0.025}
+                        transition={{ type: "spring", damping: 30, stiffness: 200, delay: 0.6 }}
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                      />
+                    </span>
+                  </h2>
+                </>
+              )}
             </div>
           </div>
         </div>

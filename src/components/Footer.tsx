@@ -32,11 +32,11 @@ export default function Footer() {
             className="select-none text-center font-bold uppercase leading-[0.85] tracking-tighter text-white"
             style={{ fontSize: "clamp(3rem, 12vw, 13rem)" }}
           >
-            Lunar Phase Studio
+            Deep Night Studio
           </h2>
 
           <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row">
-            <p>All rights reserved &copy; Lunar Phase Studio {currentYear}</p>
+            <p>All rights reserved &copy; Deep Night Studio {currentYear}</p>
             <div className="flex gap-8">
               <a href="#" className="transition-colors hover:text-white">
                 Politique de confidentialité
@@ -46,7 +46,7 @@ export default function Footer() {
               </a>
             </div>
             <p>
-              Website by <span className="text-white/70">Lunar Phase Studio</span>
+              Website by <span className="text-white/70">Deep Night Studio</span>
             </p>
           </div>
         </div>

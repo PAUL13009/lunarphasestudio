@@ -292,7 +292,7 @@ export default function AllWork() {
 
         {/* Title */}
         <Link
-          href="/projets"
+          href="/projets?reveal=true"
           ref={titleRef}
           className="absolute left-1/2 top-[10%] z-40 whitespace-nowrap font-bold uppercase tracking-tight text-white will-change-transform hover:text-white/80 transition-colors"
           style={{

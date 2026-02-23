@@ -124,7 +124,7 @@ export default function HeroSection() {
         <div className="absolute inset-0" style={{ clipPath }}>
           <Image
             src="/Skyline_Marina_Bay_Singapore.jpg"
-            alt="Lunar Phase Studio"
+            alt="Deep Night Studio"
             fill
             priority
             className="object-cover object-center"
@@ -148,7 +148,7 @@ export default function HeroSection() {
           {/* Giant title */}
           <div className="flex-shrink-0 px-4 pt-4 lg:px-6 lg:pt-6">
             <h1 className="splash-title select-none font-bold uppercase leading-[0.85] tracking-tighter text-black">
-              Lunar Phase
+              Deep Night
               <br />
               Studio
             </h1>
