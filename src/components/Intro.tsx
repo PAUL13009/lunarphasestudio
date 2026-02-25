@@ -2,11 +2,19 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const text = "Basé à Marseille, Deep Night Studio est un studio de Webdesign et de Stratégie Digitale. Nous créons des interfaces haute performance et des identités visuelles fortes pour des projets d'envergure, partout en France et à l'international.";
+const lines = [
+  "Basé à Marseille, Deep Night Studio est",
+  "un studio de Webdesign et de Stratégie",
+  "Digitale. Nous créons des interfaces",
+  "haute performance et des identités",
+  "visuelles fortes pour des projets",
+  "d'envergure, partout en France et à",
+  "l'international.",
+];
 
-// Split into characters, preserving spaces
-const chars = text.split("");
-const totalChars = chars.length;
+const text = lines.join(" ");
+const charsByLine = lines.map((line) => line.split(""));
+const totalChars = charsByLine.reduce((sum, lineChars) => sum + lineChars.length, 0);
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
@@ -35,20 +43,45 @@ export default function Intro() {
   return (
     <section ref={sectionRef} className="bg-black px-6 py-28 lg:px-10 lg:py-40">
       <div className="mx-auto max-w-[1200px]">
-        <p className="text-center text-3xl font-bold uppercase leading-snug tracking-tight sm:text-4xl md:text-5xl lg:text-[3.5rem] lg:leading-[1.15]" aria-label={text}>
-          {chars.map((char, i) => {
-            const charProgress = clamp(
-              (progress - i / totalChars) * totalChars,
-              0,
-              1
-            );
-            const opacity = 0.15 + 0.85 * charProgress;
+        <p
+          className="text-center text-3xl font-bold uppercase leading-snug tracking-tight sm:text-4xl md:text-5xl lg:text-[3.5rem] lg:leading-[1.15]"
+          aria-label={text}
+        >
+          {charsByLine.map((lineChars, lineIndex) => {
+            const charsBefore = charsByLine
+              .slice(0, lineIndex)
+              .reduce((sum, chars) => sum + chars.length, 0);
+
+            // Staggered line reveal when section enters viewport
+            const lineStart = lineIndex * 0.08;
+            const lineProgress = clamp((progress - lineStart) / 0.28, 0, 1);
+
             return (
               <span
-                key={i}
-                style={{ opacity, color: "white" }}
+                key={lineIndex}
+                className="block will-change-transform"
+                style={{
+                  opacity: lineProgress,
+                  transform: `translateY(${(1 - lineProgress) * 26}px)`,
+                }}
               >
-                {char}
+                {lineChars.map((char, charIndex) => {
+                  const globalIndex = charsBefore + charIndex;
+                  const charProgress = clamp(
+                    (progress - globalIndex / totalChars) * totalChars,
+                    0,
+                    1
+                  );
+                  const opacity = 0.15 + 0.85 * charProgress;
+                  return (
+                    <span
+                      key={`${lineIndex}-${charIndex}`}
+                      style={{ opacity, color: "white" }}
+                    >
+                      {char}
+                    </span>
+                  );
+                })}
               </span>
             );
           })}

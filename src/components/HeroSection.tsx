@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import RotatingText from "@/components/RotatingText";
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -106,8 +107,18 @@ export default function HeroSection() {
   const splashOpacity = clamp(1 - progress / 0.4, 0, 1);
   const splashTranslateY = lerp(0, -30, clamp(progress / 0.4, 0, 1));
 
-  const heroOpacity = clamp((progress - 0.65) / 0.35, 0, 1);
-  const heroTranslateY = lerp(25, 0, clamp((progress - 0.65) / 0.35, 0, 1));
+  const heroRaw = clamp((progress - 0.65) / 0.35, 0, 1);
+  const heroOpacity = heroRaw;
+  const heroTranslateY = lerp(25, 0, heroRaw);
+  const [heroTextVisible, setHeroTextVisible] = useState(false);
+
+  useEffect(() => {
+    if (heroRaw >= 1) {
+      setHeroTextVisible(true);
+    } else if (heroRaw < 0.5) {
+      setHeroTextVisible(false);
+    }
+  }, [heroRaw]);
 
   const bgWhiteOpacity = clamp(1 - progress / 0.6, 0, 1);
 
@@ -156,33 +167,59 @@ export default function HeroSection() {
 
           {/* Spacer */}
           <div className="flex-1" />
-
-          {/* Bottom splash text */}
-          <div className="flex-shrink-0 px-6 pb-6 lg:px-10 lg:pb-8">
-            <div className="flex items-end justify-end">
-              <p className="max-w-xs text-right text-sm leading-relaxed text-black/60 lg:text-base">
-                Driven by Vision, Centered on Craft,
-                <br />
-                Embracing Innovation
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* ===== HERO CONTENT (fades in) ===== */}
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-6 pb-8 lg:px-10 lg:pb-10"
           style={{
-            opacity: heroOpacity,
+            opacity: heroTextVisible ? 1 : 0,
             transform: `translateY(${heroTranslateY}px)`,
           }}
         >
-          <div className="pointer-events-auto mx-auto flex max-w-[1600px] items-end justify-end">
-            <p className="max-w-sm text-right text-base leading-relaxed text-white/80 lg:text-lg">
-              Driven by Vision, Centered on Craft,
-              <br />
-              Embracing Innovation
-            </p>
+          <div className="pointer-events-auto mx-auto flex max-w-[1600px] flex-col items-end justify-end gap-6">
+            {heroTextVisible && (
+              <h2 className="max-w-3xl text-right text-3xl font-bold uppercase leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-6xl">
+                <RotatingText
+                  texts={["Nous transformons vos idées en réalité digitale"]}
+                  auto={false}
+                  animatePresenceInitial={true}
+                  splitBy="characters"
+                  staggerFrom="first"
+                  staggerDuration={0.02}
+                  transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                />
+              </h2>
+            )}
+            {heroTextVisible && (
+              <p className="max-w-sm text-right text-base leading-relaxed text-white/80 lg:text-lg">
+                <RotatingText
+                  texts={["Driven by Vision, Centered on Craft,"]}
+                  auto={false}
+                  animatePresenceInitial={true}
+                  splitBy="characters"
+                  staggerFrom="first"
+                  staggerDuration={0.02}
+                  transition={{ type: "spring", damping: 30, stiffness: 200, delay: 0.25 }}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                />
+                <br />
+                <RotatingText
+                  texts={["Embracing Innovation"]}
+                  auto={false}
+                  animatePresenceInitial={true}
+                  splitBy="characters"
+                  staggerFrom="first"
+                  staggerDuration={0.02}
+                  transition={{ type: "spring", damping: 30, stiffness: 200, delay: 0.45 }}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                />
+              </p>
+            )}
           </div>
         </div>
       </div>
