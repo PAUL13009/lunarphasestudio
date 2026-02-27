@@ -8,6 +8,7 @@ import ContactOverlay from "@/components/ContactOverlay";
 
 const navLinks = [
   { href: "#services", label: "Services" },
+  { href: "/tools", label: "Tools" },
   { href: "/projets", label: "Projets" },
   { href: "/a-propos", label: "À propos" },
   { href: "#contact", label: "Contact" },
