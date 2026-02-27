@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnimatedContent from "@/components/AnimatedContent";
@@ -53,6 +54,19 @@ export default function ToolsPage() {
 
   return (
     <>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-HTJKWVSFYC"
+        strategy="afterInteractive"
+      />
+      <Script id="ga4-tools-page" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HTJKWVSFYC');
+        `}
+      </Script>
+
       <Header />
 
       <main className="relative z-10 min-h-screen bg-black text-white">
