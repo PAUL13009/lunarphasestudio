@@ -30,13 +30,24 @@ export default function ToolsPage() {
                 transforme une simple phrase en une interface web premium, prête à l&apos;emploi.
               </h2>
             </AnimatedContent>
+
+            <AnimatedContent distance={35} duration={0.8} threshold={0.1} delay={0.18}>
+              <div className="mt-10">
+                <a
+                  href="#waitlist-form"
+                  className="inline-block border border-white/25 bg-black px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
+                >
+                  Rejoindre la liste d&apos;attente
+                </a>
+              </div>
+            </AnimatedContent>
           </div>
         </section>
 
         <section className="px-6 py-20 lg:px-10 lg:py-28">
           <div className="mx-auto max-w-[1500px]">
             <AnimatedContent distance={50} duration={0.9} threshold={0.15}>
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/45">
+              <p className="mb-5 text-base font-bold uppercase tracking-[0.22em] text-white lg:text-xl">
                 Pourquoi s&apos;inscrire ?
               </p>
               <h2 className="mb-12 text-4xl font-bold uppercase leading-[0.95] tracking-tight lg:text-6xl">
@@ -96,18 +107,21 @@ export default function ToolsPage() {
           </div>
         </section>
 
-        <section className="px-6 pb-32 pt-12 lg:px-10 lg:pb-44">
+        <section id="waitlist-form" className="px-6 pb-32 pt-12 lg:px-10 lg:pb-44">
           <div className="mx-auto max-w-[1500px] border border-white/10 bg-white/[0.02] p-8 lg:p-12">
             <AnimatedContent distance={35} duration={0.85} threshold={0.15}>
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/45">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/45 text-center">
                 Liste privée
               </p>
-              <h2 className="mb-6 max-w-4xl text-4xl font-bold uppercase leading-[0.95] tracking-tight lg:text-6xl">
+              <h2 className="mx-auto mb-6 max-w-4xl text-center text-4xl font-bold uppercase leading-[0.95] tracking-tight lg:text-6xl">
                 Je dévoile le nom de l&apos;outil et j&apos;envoie les accès + les prompts à ma
                 liste privée la semaine prochaine.
               </h2>
 
-              <form onSubmit={(e) => e.preventDefault()} className="mt-10 flex max-w-3xl flex-col gap-5">
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                className="mx-auto mt-10 flex w-full max-w-3xl flex-col items-center gap-5"
+              >
                 <input
                   type="email"
                   placeholder="Entrez votre meilleur email..."
@@ -123,7 +137,7 @@ export default function ToolsPage() {
                 </button>
               </form>
 
-              <p className="mt-6 max-w-3xl text-sm leading-relaxed text-white/50 lg:text-base">
+              <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-relaxed text-white/50 lg:text-base">
                 Pas de spam. Inscription gratuite et sans engagement. Vous recevrez l&apos;outil et
                 les prompts en avant-première.
               </p>
