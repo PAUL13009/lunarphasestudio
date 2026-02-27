@@ -1,10 +1,56 @@
 "use client";
 
+import { FormEvent, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnimatedContent from "@/components/AnimatedContent";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase-client";
 
 export default function ToolsPage() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFeedback(null);
+    setIsSubmitting(true);
+
+    try {
+      const normalizedEmail = email.trim().toLowerCase();
+      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
+      if (!isValidEmail) {
+        throw new Error("Email invalide.");
+      }
+
+      await addDoc(collection(db, "waitlistEmails"), {
+        email: normalizedEmail,
+        createdAt: serverTimestamp(),
+        source: "tools-page",
+      });
+
+      setFeedback({
+        type: "success",
+        message: "Inscription enregistrée avec succès.",
+      });
+      setEmail("");
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Impossible d'enregistrer votre email pour le moment.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -119,23 +165,38 @@ export default function ToolsPage() {
               </h2>
 
               <form
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={handleSubmit}
                 className="mx-auto mt-10 flex w-full max-w-3xl flex-col items-center gap-5"
               >
                 <input
                   type="email"
                   placeholder="Entrez votre meilleur email..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="w-full border border-white/20 bg-black px-6 py-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-white/45"
                 />
 
                 <button
-                  type="button"
-                  className="cursor-default border border-white/25 bg-black px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition-all duration-300"
-                  aria-disabled="true"
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="border border-white/25 bg-black px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Rejoindre la liste d&apos;attente (gratuit)
+                  {isSubmitting
+                    ? "Inscription en cours..."
+                    : "Rejoindre la liste d&apos;attente (gratuit)"}
                 </button>
               </form>
+
+              {feedback && (
+                <p
+                  className={`mx-auto mt-4 max-w-3xl text-center text-sm ${
+                    feedback.type === "success" ? "text-emerald-400" : "text-red-400"
+                  }`}
+                >
+                  {feedback.message}
+                </p>
+              )}
 
               <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-relaxed text-white/50 lg:text-base">
                 Pas de spam. Inscription gratuite et sans engagement. Vous recevrez l&apos;outil et
